@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const { registerUser } = require('./controller/RegisterUser');
 const { loginUser } = require('./controller/LoginUser');
+const InvoiceData = require('./controller/InvoiceData');
 
 
 
@@ -38,3 +39,4 @@ mongoose.connect(database)
 
 app.post('/register',registerUser)
 app.post('/login',loginUser)
+app.post('/invoice',InvoiceData)

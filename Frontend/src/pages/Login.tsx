@@ -1,6 +1,13 @@
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import RegisterImage from '../assets/RegisterImage.png';
+import axios from 'axios';
+import { BASE_URL } from '../constants';
+import toast from 'react-hot-toast';
+
+import { useDispatch } from 'react-redux';
+import { setEmail, setUsername } from '../../app/authslice';
+
 
 const Login = () => {
 
@@ -13,15 +20,33 @@ const Login = () => {
     const {
         register,
         handleSubmit,
-        watch,
         reset,
         formState: { errors },
     } = useForm<Inputs>()
 
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     // Submit handler
-    const onSubmit = (data) => {
-        console.log('Form data:', data);
-        reset()
+    const onSubmit:SubmitHandler<Inputs> = async (data: Inputs) => {
+        try {
+            const res = await axios.post(`${BASE_URL}/login`, data);
+            if (res.status === 200) {
+                toast.success('Login successful!');
+                dispatch(setUsername(res.data.user.username))
+                dispatch(setEmail(res.data.user.email))
+                localStorage.setItem('token', res.data.token);  // Store token in local storage
+                navigate('/add-product');  // Navigate to the dashboard or other protected route
+                reset();
+            } else {
+                toast.error(res.data.message || 'Login failed. Please try again.');
+            }
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error('An unexpected error occurred. Please try again.');
+            }
+        }
     };
 
     return (

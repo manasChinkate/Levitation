@@ -4,14 +4,15 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Navbar from './components/Nav/Navbar';
 import AddProduct from './pages/AddProduct/AddProduct';
+import ProductInvoice from './pages/AddProduct/ProductInvoice';
 
 const App = () => {
 
   const Layout = () => {
     return (
       <div className='h-screen flex flex-col custom-scrollbar'>
-        <div className=' h-[12vh]'><Navbar /></div>
-        <div className=' card bg-[#151514] h-full'><Outlet /></div>
+        <div className=' h-auto'><Navbar /></div>
+        <div className=' bg-[#151514]  flex-1'><Outlet /></div>
       </div>
     )
   }
@@ -35,7 +36,14 @@ const App = () => {
           element: <AddProduct />
         },
       ]
-    }])
+    },
+    {
+      path: "/product-invoice",
+      element: <ProductInvoice />
+    }
+  
+  
+  ])
   return <RouterProvider router={router}></RouterProvider>;
 
 }

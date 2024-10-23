@@ -1,6 +1,10 @@
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import RegisterImage from '../assets/RegisterImage.png';
+import axios from 'axios';
+import { BASE_URL } from '../constants';
+import toast from 'react-hot-toast';
+import { useNavigation } from 'react-router-dom';
 
 const Register = () => {
 
@@ -18,11 +22,24 @@ const Register = () => {
         formState: { errors },
     } = useForm<Inputs>()
 
+    const navigate = useNavigate()
+
     // Submit handler
-    const onSubmit = (data) => {
-        console.log('Form data:', data);
-        reset()
-    };
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        try {
+            const res = await axios.post(`${BASE_URL}/register`, data);
+            if (res.data.success) {
+                toast.success(res.data.message);
+                
+            } else {
+                toast.success(res.data.message);
+                reset()
+                navigate('/login')
+            }
+        } catch (error:any) {
+            toast.error(error.response.data.message);
+        }
+    }
 
     return (
         <div className="h-full w-full flex justify-evenly">
