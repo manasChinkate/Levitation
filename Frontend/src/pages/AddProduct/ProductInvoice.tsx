@@ -32,7 +32,7 @@ const ProductInvoice = () => {
       
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', 'product-invoice.png'); // Filename for the downloaded PDF
+          link.setAttribute('download', 'product-invoice.pdf'); // Filename for the downloaded PDF
           document.body.appendChild(link);
           link.click();
           link.parentNode.removeChild(link);

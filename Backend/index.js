@@ -58,16 +58,16 @@ app.get('/generate-invoice-pdf', async (req, res) => {
     await page.goto('http://localhost:5173/product-invoice', { waitUntil: 'networkidle0' });
 
     // Generate the PDF
-    // const pdfBuffer = await page.pdf({
-    //   format: 'A4',
-    //   printBackground: true,
-    //   margin: {
-    //     top: '20px',
-    //     bottom: '20px',
-    //     left: '20px',
-    //     right: '20px',
-    //   },
-    // });
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '20px',
+        bottom: '20px',
+        left: '20px',
+        right: '20px',
+      },
+    });
 
     const screenshotBuffer = await page.screenshot({
       fullPage: true // Capture the full page, not just the viewport
@@ -76,16 +76,12 @@ app.get('/generate-invoice-pdf', async (req, res) => {
     // Close the browser
     await browser.close();
 
-    res.set({
-      'Content-Type': 'image/png',
-      'Content-Disposition': 'attachment; filename=invoice-screenshot.png',
-  });
-  // res.send(screenshotBuffer);
+ 
 
     // Send the generated PDF as a response
-    // res.contentType('application/pdf');
-    // res.setHeader('Content-Disposition', 'attachment; filename="product-invoice.pdf"');
-    const buffer = Buffer.from(screenshotBuffer);
+    res.contentType('application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="product-invoice.pdf"');
+    const buffer = Buffer.from(pdfBuffer);
     res.send(buffer);
     console.log('successfully generated')
     
