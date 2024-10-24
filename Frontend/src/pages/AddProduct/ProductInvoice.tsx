@@ -1,16 +1,12 @@
-import React, { useEffect } from 'react'
 import logo1 from '../../assets/logo1.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../app/store'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
 
 const ProductInvoice = () => {
 
     const username = useSelector((state: RootState) => state.auth.username)
     const email = useSelector((state: RootState) => state.auth.email)
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
     const Products = useSelector((state: RootState) => state.auth.productcart)
 
 
@@ -24,17 +20,26 @@ const ProductInvoice = () => {
     // Calculate total amount (subtotal + GST)
     const total = subtotal + gst;
 
-    useEffect(() => {
-        // Check if the token is missing from localStorage
-        const token = localStorage.getItem('token');
-
-
-        if (!token || !username || !email) {
-            toast.error("Your Session out, Please Login again")
-            navigate('/login');
-        }
-    }, [navigate, username]);
+    
     const currentDate = new Date().toLocaleDateString();
+
+
+    const downloadPDF = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/generate-invoice-pdf');
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(new Blob([blob]));
+      
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'product-invoice.png'); // Filename for the downloaded PDF
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+        } catch (error) {
+          console.error('Error downloading PDF:', error);
+        }
+      };
 
 
     return (
@@ -132,6 +137,7 @@ const ProductInvoice = () => {
                 <div className=' text-[9px] text-white bg-[#272833] w-auto mx-16 my-3 px-5 py-2 rounded-3xl'>
                 We are pleased to provide any further information you may require and look forward to assisting with your next order. Rest assured, it will receive our prompt and dedicated attention.
                 </div>
+                <button onClick={downloadPDF}>Download PDF</button>
             </div>
 
         </div>
